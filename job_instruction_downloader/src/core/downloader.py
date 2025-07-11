@@ -16,6 +16,9 @@ from selenium.common.exceptions import TimeoutException
 from ..models.job_instruction import JobInstruction
 from ..models.department import Department
 from ..utils.config import ConfigManager
+from .parsers.consultant_parser import ConsultantParser
+from .parsers.base_parser import BaseParser
+from .validator import DocumentValidator
 
 
 class DocumentDownloader:
@@ -39,6 +42,9 @@ class DocumentDownloader:
 
         self.progress_callback: Optional[Callable[[int, int], None]] = None
         self.status_callback: Optional[Callable[[str], None]] = None
+
+        self.parser: Optional[BaseParser] = None
+        self.validator: Optional[DocumentValidator] = None
 
     def setup_driver(self) -> bool:
         """Setup Selenium WebDriver.
@@ -114,6 +120,13 @@ class DocumentDownloader:
             if not site_config:
                 self.logger.error(f"Failed to load site configuration for {site_name}")
                 return False
+
+            self.parser = self._create_parser(site_name, site_config)
+            if not self.parser:
+                self.logger.error(f"Failed to create parser for {site_name}")
+                return False
+
+            self.validator = DocumentValidator(site_config)
 
             if not self.setup_driver():
                 return False
@@ -277,3 +290,43 @@ class DocumentDownloader:
             "elapsed_time": elapsed_time,
             "download_rate": self.completed_documents / (elapsed_time / 60) if elapsed_time > 0 else 0
         }
+
+    def _create_parser(self, site_name: str, site_config: Dict[str, Any]) -> Optional[BaseParser]:
+        """Create appropriate parser for the site.
+
+        Args:
+            site_name: Name of the site.
+            site_config: Site configuration.
+
+        Returns:
+            Parser instance or None if creation failed.
+        """
+        try:
+            if site_name == "consultant_ru":
+                return ConsultantParser(site_config)
+            else:
+                self.logger.error(f"No parser available for site: {site_name}")
+                return None
+
+        except Exception as e:
+            self.logger.error(f"Failed to create parser for {site_name}: {e}")
+            return None
+
+    def extract_department_documents(self, department: Department) -> List[JobInstruction]:
+        """Extract documents for a department using the configured parser.
+
+        Args:
+            department: Department to extract documents for.
+
+        Returns:
+            List of extracted job instructions.
+        """
+        if not self.parser or not self.driver:
+            self.logger.error("Parser or driver not initialized")
+            return []
+
+        try:
+            return self.parser.extract_documents(self.driver, department)
+        except Exception as e:
+            self.logger.error(f"Failed to extract documents for {department.name}: {e}")
+            return []

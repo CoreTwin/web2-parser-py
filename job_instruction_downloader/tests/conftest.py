@@ -101,3 +101,38 @@ def sample_department():
         department.add_job_instruction(ji)
 
     return department
+
+
+@pytest.fixture
+def mock_webdriver():
+    """Mock WebDriver for testing."""
+    from unittest.mock import Mock
+    driver = Mock()
+    driver.find_elements.return_value = []
+    driver.find_element.return_value = Mock()
+    driver.get.return_value = None
+    return driver
+
+
+@pytest.fixture
+def consultant_parser_config():
+    """Configuration for Consultant.ru parser testing."""
+    return {
+        "site_info": {
+            "name": "Consultant.ru",
+            "base_url": "https://cloud.consultant.ru"
+        },
+        "extraction": {
+            "selectors": {
+                "document_links": "[devinid]",
+                "document_title": "h1, .document-title"
+            }
+        },
+        "download": {
+            "expected_file_types": [".docx", ".doc"],
+            "validation": {
+                "min_size": 1000,
+                "max_size": 1000000
+            }
+        }
+    }
