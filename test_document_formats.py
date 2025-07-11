@@ -67,14 +67,16 @@ def test_document_formats():
             test_file = create_test_document(format_type, 50000)
             print(f"Created test file: {test_file}")
             
-            is_valid = validator.validate_file(test_file)
+            is_valid = validator.validate_file(str(test_file), validation_config)
             print(f"File validation result: {is_valid}")
             
-            content_valid = validator.validate_content(test_file)
+            content_valid = validator._validate_content(str(test_file))
             print(f"Content validation result: {content_valid}")
             
-            structure_valid = validator.validate_document_structure(test_file)
+            structure_result = validator.validate_document_structure(str(test_file))
+            structure_valid = structure_result.get("valid", False)
             print(f"Structure validation result: {structure_valid}")
+            print(f"Structure metadata: {structure_result.get('metadata', {})}")
             
             test_results[format_type] = {
                 "file_valid": is_valid,
@@ -119,17 +121,22 @@ def test_document_size_limits():
         validator = DocumentValidator(config)
         
         small_file = create_test_document("docx", 1000)  # 1KB
-        small_valid = validator.validate_file(small_file)
+        consultant_config_path = Path(__file__).parent / "job_instruction_downloader/config/sites/consultant_ru.json"
+        with open(consultant_config_path, 'r', encoding='utf-8') as f:
+            site_config = json.load(f)
+        validation_config = site_config.get("validation", {})
+        
+        small_valid = validator.validate_file(str(small_file), validation_config)
         print(f"Small file (1KB) validation: {small_valid} (expected: False)")
         small_file.unlink()
         
         normal_file = create_test_document("docx", 50000)  # 50KB
-        normal_valid = validator.validate_file(normal_file)
+        normal_valid = validator.validate_file(str(normal_file), validation_config)
         print(f"Normal file (50KB) validation: {normal_valid} (expected: True)")
         normal_file.unlink()
         
         large_file = create_test_document("docx", 15000000)  # 15MB
-        large_valid = validator.validate_file(large_file)
+        large_valid = validator.validate_file(str(large_file), validation_config)
         print(f"Large file (15MB) validation: {large_valid} (expected: False)")
         large_file.unlink()
         
