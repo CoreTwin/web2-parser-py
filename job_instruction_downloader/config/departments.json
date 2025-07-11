@@ -5,35 +5,55 @@
       "name": "ПЛАНОВО-ЭКОНОМИЧЕСКИЙ ОТДЕЛ",
       "folder_name": "Планово-экономический отдел",
       "priority": 1,
-      "enabled": true
+      "enabled": true,
+      "total_documents": 15,
+      "description": "Отдел планирования и экономического анализа",
+      "selector_range": "[devinid='131']-[devinid='145']",
+      "cloud_folder": "ПЛАНОВО-ЭКОНОМИЧЕСКИЙ ОТДЕЛ"
     },
     {
       "id": "financial",
-      "name": "ФИНАНСОВЫЙ ОТДЕЛ", 
+      "name": "ФИНАНСОВЫЙ ОТДЕЛ",
       "folder_name": "Финансовый отдел",
       "priority": 2,
-      "enabled": true
+      "enabled": true,
+      "total_documents": 10,
+      "description": "Финансовый отдел и бухгалтерия",
+      "selector_range": "[devinid='146']-[devinid='155']",
+      "cloud_folder": "ФИНАНСОВЫЙ ОТДЕЛ"
     },
     {
       "id": "contract_service",
       "name": "КОНТРАКТНАЯ СЛУЖБА",
       "folder_name": "Контрактная служба",
       "priority": 3,
-      "enabled": true
+      "enabled": true,
+      "total_documents": 7,
+      "description": "Служба по контрактам и закупкам",
+      "selector_range": "[devinid='156']-[devinid='162']",
+      "cloud_folder": "КОНТРАКТНАЯ СЛУЖБА"
     },
     {
       "id": "organization",
       "name": "ОТДЕЛ ОРГАНИЗАЦИИ",
       "folder_name": "Отдел организации",
       "priority": 4,
-      "enabled": true
+      "enabled": true,
+      "total_documents": 14,
+      "description": "Организационный отдел",
+      "selector_range": "[devinid='163']-[devinid='176']",
+      "cloud_folder": "ОТДЕЛ ОРГАНИЗАЦИИ"
     },
     {
       "id": "safety",
       "name": "ОХРАНА ТРУДА",
       "folder_name": "Охрана труда",
       "priority": 5,
-      "enabled": true
+      "enabled": true,
+      "total_documents": 17,
+      "description": "Отдел охраны труда и безопасности",
+      "selector_range": "[devinid='177']-[devinid='193']",
+      "cloud_folder": "ОХРАНА ТРУДА"
     }
   ],
   "folder_structure": {
