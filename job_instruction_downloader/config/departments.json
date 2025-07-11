@@ -1,0 +1,44 @@
+{
+  "departments": [
+    {
+      "id": "planning_economic",
+      "name": "ПЛАНОВО-ЭКОНОМИЧЕСКИЙ ОТДЕЛ",
+      "folder_name": "Планово-экономический отдел",
+      "priority": 1,
+      "enabled": true
+    },
+    {
+      "id": "financial",
+      "name": "ФИНАНСОВЫЙ ОТДЕЛ", 
+      "folder_name": "Финансовый отдел",
+      "priority": 2,
+      "enabled": true
+    },
+    {
+      "id": "contract_service",
+      "name": "КОНТРАКТНАЯ СЛУЖБА",
+      "folder_name": "Контрактная служба",
+      "priority": 3,
+      "enabled": true
+    },
+    {
+      "id": "organization",
+      "name": "ОТДЕЛ ОРГАНИЗАЦИИ",
+      "folder_name": "Отдел организации",
+      "priority": 4,
+      "enabled": true
+    },
+    {
+      "id": "safety",
+      "name": "ОХРАНА ТРУДА",
+      "folder_name": "Охрана труда",
+      "priority": 5,
+      "enabled": true
+    }
+  ],
+  "folder_structure": {
+    "root_folder": "Должностные инструкции",
+    "organize_by": "department",
+    "naming_pattern": "{department}/{title}.{ext}"
+  }
+}

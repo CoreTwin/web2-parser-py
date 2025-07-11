@@ -1,0 +1,44 @@
+{
+  "application": {
+    "name": "Job Instruction Downloader",
+    "version": "1.0.0",
+    "debug": false,
+    "log_level": "INFO"
+  },
+  "download": {
+    "timeout": 30,
+    "retry_attempts": 3,
+    "retry_delay": 5,
+    "max_concurrent_downloads": 3,
+    "temp_directory": "downloads"
+  },
+  "selenium": {
+    "browser": "chrome",
+    "driver_path": "auto",
+    "headless": true,
+    "window_size": [1920, 1080],
+    "page_load_timeout": 30,
+    "implicit_wait": 10
+  },
+  "cloud_storage": {
+    "default_provider": "google_drive",
+    "create_folders_automatically": true,
+    "check_duplicates": true,
+    "backup_enabled": false
+  },
+  "ui": {
+    "theme": "light",
+    "auto_save_interval": 300,
+    "show_progress_details": true
+  },
+  "logging": {
+    "file_path": "logs/app.log",
+    "max_file_size": "10MB",
+    "backup_count": 5,
+    "console_output": true,
+    "detailed_logs": {
+      "http_requests": false,
+      "selenium_actions": false
+    }
+  }
+}
