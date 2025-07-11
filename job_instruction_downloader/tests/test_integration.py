@@ -44,7 +44,13 @@ def integration_config():
 @pytest.fixture
 def test_department():
     """Test department fixture."""
-    department = Department("TEST_DEPARTMENT", True, 2)
+    department = Department(
+        id="test_dept",
+        name="TEST_DEPARTMENT", 
+        folder_name="Test Department",
+        priority=2,
+        enabled=True
+    )
     department.job_instructions = [
         JobInstruction("Test Document 1", "TEST_DEPARTMENT", "http://example.com/doc1"),
         JobInstruction("Test Document 2", "TEST_DEPARTMENT", "http://example.com/doc2")
@@ -134,7 +140,7 @@ class TestPhase2Integration:
             ("Должностная инструкция менеджера", "Должностная-инструкция-менеджера.docx"),
             ("Test Document with Special Characters!@#", "Test-Document-with-Special-Characters.docx"),
             ("Very Long Document Title That Exceeds The Maximum Length Limit And Should Be Truncated Properly",
-             "Very-Long-Document-Title-That-Exceeds-The-Maximum-Length-Limit-And-Should-Be-Truncated.docx")
+             "Very-Long-Document-Title-That-Exceeds-The-Maximum-Length-Limit-And-Should-Be-Truncated-Properly.docx")
         ]
 
         for input_title, expected_filename in test_cases:

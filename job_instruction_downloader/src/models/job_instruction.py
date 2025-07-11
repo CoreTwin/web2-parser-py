@@ -58,7 +58,7 @@ class JobInstruction:
 
         filename = ' '.join(filename.split())
         if len(filename) > 100:
-            filename = filename[:97] + "..."
+            filename = filename[:100]
 
         return filename
 

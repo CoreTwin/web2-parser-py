@@ -102,20 +102,22 @@ class TestConsultantParser:
     def test_consultant_parser_initialization(self):
         """Test Consultant parser initialization."""
         config = {
-            "site_info": {
-                "name": "Consultant.ru",
-                "base_url": "https://cloud.consultant.ru"
-            },
-            "extraction": {
-                "selectors": {
-                    "document_links": "[devinid]"
+            "site_config": {
+                "site_info": {
+                    "name": "Consultant.ru",
+                    "base_url": "https://cloud.consultant.ru"
+                },
+                "extraction": {
+                    "selectors": {
+                        "document_links": "[devinid]"
+                    }
                 }
             }
         }
 
         parser = ConsultantParser(config)
         assert parser.config == config
-        assert parser.site_config == config
+        assert parser.site_config == config["site_config"]
 
     def test_extract_url(self):
         """Test URL extraction."""
@@ -140,12 +142,14 @@ class TestConsultantParser:
     def test_validate_document(self, tmp_path):
         """Test document validation."""
         config = {
-            "download": {
-                "expected_file_types": [".docx", ".doc"],
-                "validation": {
-                    "min_size": 1000,
-                    "max_size": 1000000,
-                    "check_content": False
+            "site_config": {
+                "download": {
+                    "expected_file_types": [".docx", ".doc"],
+                    "validation": {
+                        "min_size": 1000,
+                        "max_size": 1000000,
+                        "check_content": False
+                    }
                 }
             }
         }

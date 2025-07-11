@@ -592,7 +592,7 @@ class DocumentDownloader:
         clean_title = clean_title.strip('-')
 
         if len(clean_title) > 100:
-            clean_title = clean_title[:100].strip('-')
+            clean_title = clean_title[:100]
 
         return f"{clean_title}.docx"
 
