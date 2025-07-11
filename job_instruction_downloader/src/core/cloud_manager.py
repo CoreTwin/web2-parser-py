@@ -55,7 +55,7 @@ class GoogleDriveManager:
                 if creds and creds.expired and creds.refresh_token:
                     creds.refresh(Request())
                 else:
-                    if not Path(credentials_path).exists():
+                    if not credentials_path or not Path(credentials_path).exists():
                         self.logger.error(f"Credentials file not found: {credentials_path}")
                         return False
 
@@ -90,7 +90,7 @@ class GoogleDriveManager:
                 self.logger.error("Google Drive service not initialized")
                 return None
 
-            folder_metadata = {
+            folder_metadata: Dict[str, Any] = {
                 'name': folder_name,
                 'mimeType': 'application/vnd.google-apps.folder'
             }
@@ -189,7 +189,7 @@ class GoogleDriveManager:
 
             file_name = custom_name or file_path_obj.name
 
-            file_metadata = {'name': file_name}
+            file_metadata: Dict[str, Any] = {'name': file_name}
             if folder_id:
                 file_metadata['parents'] = [folder_id]
 
