@@ -39,7 +39,7 @@ class ConfigManager:
             with open(config_path, 'r', encoding='utf-8') as f:
                 config = json.load(f)
             self.logger.info(f"Loaded configuration from {config_path}")
-            return config
+            return config if isinstance(config, dict) else {}
         except FileNotFoundError:
             self.logger.error(f"Configuration file not found: {config_path}")
             return {}
@@ -62,7 +62,7 @@ class ConfigManager:
             with open(config_path, 'r', encoding='utf-8') as f:
                 config = json.load(f)
             self.logger.info(f"Loaded site configuration from {config_path}")
-            return config
+            return config if isinstance(config, dict) else {}
         except FileNotFoundError:
             self.logger.error(f"Site configuration file not found: {config_path}")
             return {}

@@ -45,42 +45,45 @@ class ConsultantParser(BaseParser):
             start_url = self.site_config.get("navigation", {}).get("start_url", "")
             base_url = self.site_config.get("site_info", {}).get("base_url", "")
 
-            if start_url and base_url:
-                full_url = f"{base_url}{start_url}"
-                self.logger.info(f"Navigating to: {full_url}")
-                driver.get(full_url)
+            if not start_url or not base_url:
+                self.logger.warning(f"Missing URL configuration for {department.name}")
+                return []
 
-                WebDriverWait(driver, 10).until(
-                    EC.presence_of_element_located((By.TAG_NAME, "body"))
-                )
+            full_url = f"{base_url}{start_url}"
+            self.logger.info(f"Navigating to: {full_url}")
+            driver.get(full_url)
 
-                document_selector = selectors.get("document_links", "[devinid]")
-                self.logger.info(f"Looking for documents with selector: {document_selector}")
+            WebDriverWait(driver, 10).until(
+                EC.presence_of_element_located((By.TAG_NAME, "body"))
+            )
 
-                document_elements = driver.find_elements(By.CSS_SELECTOR, document_selector)
-                self.logger.info(f"Found {len(document_elements)} potential document elements")
+            document_selector = selectors.get("document_links", "[devinid]")
+            self.logger.info(f"Looking for documents with selector: {document_selector}")
 
-                for i, element in enumerate(document_elements):
-                    try:
-                        title = self._extract_title(driver, element)
-                        url = self._extract_url(element, base_url)
+            document_elements = driver.find_elements(By.CSS_SELECTOR, document_selector)
+            self.logger.info(f"Found {len(document_elements)} potential document elements")
 
-                        if title and url:
-                            processed_title = self.process_title(title)
-                            job_instruction = JobInstruction(
-                                title=processed_title,
-                                department=department.name,
-                                url=url
-                            )
-                            documents.append(job_instruction)
-                            self.logger.debug(f"Extracted document {i+1}: {processed_title}")
+            for i, element in enumerate(document_elements):
+                try:
+                    title = self._extract_title(driver, element)
+                    url = self._extract_url(element, base_url)
 
-                    except Exception as e:
-                        self.logger.warning(f"Failed to extract document {i+1}: {e}")
-                        continue
+                    if title and url:
+                        processed_title = self.process_title(title)
+                        job_instruction = JobInstruction(
+                            title=processed_title,
+                            department=department.name,
+                            url=url
+                        )
+                        documents.append(job_instruction)
+                        self.logger.debug(f"Extracted document {i+1}: {processed_title}")
 
-                self.logger.info(f"Successfully extracted {len(documents)} documents for {department.name}")
-                return documents
+                except Exception as e:
+                    self.logger.warning(f"Failed to extract document {i+1}: {e}")
+                    continue
+
+            self.logger.info(f"Successfully extracted {len(documents)} documents for {department.name}")
+            return documents
 
         except Exception as e:
             self.logger.error(f"Failed to extract documents for {department.name}: {e}")
@@ -102,11 +105,13 @@ class ConsultantParser(BaseParser):
 
             try:
                 title_element = element.find_element(By.CSS_SELECTOR, title_selector)
-                return title_element.text.strip()
+                text = title_element.text
+                return text.strip() if text else ""
             except NoSuchElementException:
                 try:
                     title_element = driver.find_element(By.CSS_SELECTOR, title_selector)
-                    return title_element.text.strip()
+                    text = title_element.text
+                    return text.strip() if text else ""
                 except NoSuchElementException:
                     return element.text.strip() if element.text else ""
 
@@ -126,23 +131,24 @@ class ConsultantParser(BaseParser):
         """
         try:
             href = element.get_attribute("href")
-            if href:
+            if href and isinstance(href, str):
                 if href.startswith("http"):
-                    return href
+                    return str(href)
                 elif href.startswith("/"):
                     return f"{base_url}{href}"
                 else:
                     return f"{base_url}/{href}"
 
             onclick = element.get_attribute("onclick")
-            if onclick and "location.href" in onclick:
+            if onclick and isinstance(onclick, str) and "location.href" in onclick:
                 import re
                 url_match = re.search(r"location\.href\s*=\s*['\"]([^'\"]+)['\"]", onclick)
                 if url_match:
                     url = url_match.group(1)
-                    if url.startswith("/"):
-                        return f"{base_url}{url}"
-                    return url
+                    if isinstance(url, str):
+                        if url.startswith("/"):
+                            return f"{base_url}{url}"
+                        return url
 
             return ""
 

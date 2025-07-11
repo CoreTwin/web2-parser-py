@@ -6,12 +6,12 @@ import logging
 import logging.handlers
 import sys
 from pathlib import Path
-from typing import Optional
+from typing import Optional, Union
 
 
 def setup_logging(
     log_level: str = "INFO",
-    log_file: Optional[str] = None,
+    log_file: Optional[Union[str, Path]] = None,
     console_output: bool = True,
     max_file_size: str = "10MB",
     backup_count: int = 5
@@ -46,10 +46,10 @@ def setup_logging(
     if log_file is None:
         log_dir = Path(__file__).parent.parent.parent / "logs"
         log_dir.mkdir(exist_ok=True)
-        log_file = log_dir / "app.log"
+        log_file_path = log_dir / "app.log"
     else:
-        log_file = Path(log_file)
-        log_file.parent.mkdir(parents=True, exist_ok=True)
+        log_file_path = Path(log_file)
+        log_file_path.parent.mkdir(parents=True, exist_ok=True)
 
     size_multipliers = {'KB': 1024, 'MB': 1024**2, 'GB': 1024**3}
     max_bytes = 10 * 1024 * 1024  # Default 10MB
@@ -62,7 +62,7 @@ def setup_logging(
                 break
 
     file_handler = logging.handlers.RotatingFileHandler(
-        log_file,
+        log_file_path,
         maxBytes=max_bytes,
         backupCount=backup_count,
         encoding='utf-8'
@@ -73,7 +73,7 @@ def setup_logging(
 
     logging.info("Logging system initialized")
     logging.info(f"Log level: {log_level}")
-    logging.info(f"Log file: {log_file}")
+    logging.info(f"Log file: {log_file_path}")
     logging.info(f"Console output: {console_output}")
 
 
