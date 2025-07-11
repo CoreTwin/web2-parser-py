@@ -58,12 +58,12 @@ def config_manager(temp_dir, sample_config):
     """ConfigManager instance with temporary directory."""
     config_dir = temp_dir / "config"
     config_dir.mkdir()
-    
+
     config_file = config_dir / "settings.json"
     import json
     with open(config_file, 'w') as f:
         json.dump(sample_config, f)
-    
+
     return ConfigManager(config_dir)
 
 
@@ -71,7 +71,7 @@ def config_manager(temp_dir, sample_config):
 def sample_job_instruction():
     """Sample job instruction for testing."""
     from job_instruction_downloader.src.models.job_instruction import JobInstruction
-    
+
     return JobInstruction(
         title="Тестовая должностная инструкция",
         department="ТЕСТОВЫЙ ОТДЕЛ",
@@ -84,14 +84,14 @@ def sample_department():
     """Sample department for testing."""
     from job_instruction_downloader.src.models.department import Department
     from job_instruction_downloader.src.models.job_instruction import JobInstruction
-    
+
     department = Department(
         id="test_dept",
         name="ТЕСТОВЫЙ ОТДЕЛ",
         folder_name="Тестовый отдел",
         priority=1
     )
-    
+
     for i in range(3):
         ji = JobInstruction(
             title=f"Тестовая инструкция {i+1}",
@@ -99,5 +99,5 @@ def sample_department():
             url=f"https://example.com/test-document-{i+1}"
         )
         department.add_job_instruction(ji)
-    
+
     return department

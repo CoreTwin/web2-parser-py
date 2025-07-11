@@ -11,7 +11,7 @@ from typing import Optional, Dict, Any
 @dataclass
 class JobInstruction:
     """Represents a job instruction document."""
-    
+
     title: str
     department: str
     url: str
@@ -21,42 +21,42 @@ class JobInstruction:
     status: str = "pending"  # pending, downloading, completed, failed
     error_message: Optional[str] = None
     metadata: Optional[Dict[str, Any]] = None
-    
+
     def __post_init__(self):
         """Post-initialization processing."""
         if self.metadata is None:
             self.metadata = {}
-            
+
         if self.download_date is None and self.status == "completed":
             self.download_date = datetime.now()
-    
+
     @property
     def filename(self) -> str:
         """Generate filename for the document."""
         clean_title = self.clean_filename(self.title)
         return f"{clean_title}.docx"
-    
+
     @property
     def is_downloaded(self) -> bool:
         """Check if document is successfully downloaded."""
         return (
-            self.status == "completed" and 
-            self.file_path is not None and 
+            self.status == "completed" and
+            self.file_path is not None and
             self.file_path.exists()
         )
-    
+
     def clean_filename(self, filename: str) -> str:
         """Clean filename by removing invalid characters."""
         invalid_chars = '<>:"/\\|?*'
         for char in invalid_chars:
             filename = filename.replace(char, '_')
-        
+
         filename = ' '.join(filename.split())
         if len(filename) > 100:
             filename = filename[:97] + "..."
-            
+
         return filename
-    
+
     def to_dict(self) -> Dict[str, Any]:
         """Convert to dictionary for serialization."""
         return {
@@ -70,18 +70,18 @@ class JobInstruction:
             "error_message": self.error_message,
             "metadata": self.metadata
         }
-    
+
     @classmethod
     def from_dict(cls, data: Dict[str, Any]) -> "JobInstruction":
         """Create instance from dictionary."""
         download_date = None
         if data.get("download_date"):
             download_date = datetime.fromisoformat(data["download_date"])
-        
+
         file_path = None
         if data.get("file_path"):
             file_path = Path(data["file_path"])
-        
+
         return cls(
             title=data["title"],
             department=data["department"],

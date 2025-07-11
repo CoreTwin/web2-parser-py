@@ -2,9 +2,7 @@
 Tests for configuration management.
 """
 
-import pytest
 import json
-from pathlib import Path
 
 from job_instruction_downloader.src.utils.config import ConfigManager
 
@@ -27,11 +25,11 @@ def test_load_config_invalid_json(temp_dir):
     """Test loading configuration with invalid JSON."""
     config_dir = temp_dir / "config"
     config_dir.mkdir()
-    
+
     config_file = config_dir / "invalid.json"
     with open(config_file, 'w') as f:
         f.write("{ invalid json }")
-    
+
     config_manager = ConfigManager(config_dir)
     config = config_manager.load_config("invalid.json")
     assert config == {}
@@ -40,21 +38,21 @@ def test_load_config_invalid_json(temp_dir):
 def test_save_config(temp_dir):
     """Test saving configuration."""
     config_manager = ConfigManager(temp_dir)
-    
+
     test_config = {
         "test": "value",
         "number": 42
     }
-    
+
     success = config_manager.save_config(test_config, "test.json")
     assert success
-    
+
     config_file = temp_dir / "test.json"
     assert config_file.exists()
-    
+
     with open(config_file, 'r') as f:
         loaded_config = json.load(f)
-    
+
     assert loaded_config == test_config
 
 
@@ -71,10 +69,10 @@ def test_load_departments_config(config_manager):
             }
         ]
     }
-    
+
     config_manager.save_config(departments_config, "departments.json")
     loaded_config = config_manager.load_departments_config()
-    
+
     assert loaded_config == departments_config
     assert len(loaded_config["departments"]) == 1
     assert loaded_config["departments"][0]["name"] == "ТЕСТОВЫЙ ОТДЕЛ"
