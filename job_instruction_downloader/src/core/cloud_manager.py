@@ -55,7 +55,11 @@ class GoogleDriveManager:
                 if creds and creds.expired and creds.refresh_token:
                     creds.refresh(Request())
                 else:
-                    if not credentials_path or not Path(credentials_path).exists():
+                    if not credentials_path:
+                        self.logger.error("Credentials path not specified")
+                        return False
+                    
+                    if not Path(credentials_path).exists():
                         self.logger.error(f"Credentials file not found: {credentials_path}")
                         return False
 
