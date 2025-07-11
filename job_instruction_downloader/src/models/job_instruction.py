@@ -21,6 +21,11 @@ class JobInstruction:
     status: str = "pending"  # pending, downloading, completed, failed
     error_message: Optional[str] = None
     metadata: Optional[Dict[str, Any]] = None
+    local_path: Optional[str] = None
+    cloud_status: Optional[str] = None
+    cloud_file_id: Optional[str] = None
+    download_timestamp: Optional[float] = None
+    upload_timestamp: Optional[float] = None
 
     def __post_init__(self):
         """Post-initialization processing."""
@@ -68,7 +73,12 @@ class JobInstruction:
             "download_date": self.download_date.isoformat() if self.download_date else None,
             "status": self.status,
             "error_message": self.error_message,
-            "metadata": self.metadata
+            "metadata": self.metadata,
+            "local_path": self.local_path,
+            "cloud_status": self.cloud_status,
+            "cloud_file_id": self.cloud_file_id,
+            "download_timestamp": self.download_timestamp,
+            "upload_timestamp": self.upload_timestamp
         }
 
     @classmethod
@@ -91,5 +101,10 @@ class JobInstruction:
             download_date=download_date,
             status=data.get("status", "pending"),
             error_message=data.get("error_message"),
-            metadata=data.get("metadata", {})
+            metadata=data.get("metadata", {}),
+            local_path=data.get("local_path"),
+            cloud_status=data.get("cloud_status"),
+            cloud_file_id=data.get("cloud_file_id"),
+            download_timestamp=data.get("download_timestamp"),
+            upload_timestamp=data.get("upload_timestamp")
         )
