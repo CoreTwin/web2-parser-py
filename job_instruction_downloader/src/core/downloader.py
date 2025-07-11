@@ -12,9 +12,7 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.chrome.options import Options as ChromeOptions
-from selenium.webdriver.chrome.service import Service
 from selenium.common.exceptions import TimeoutException
-from webdriver_manager.chrome import ChromeDriverManager
 
 from ..models.job_instruction import JobInstruction
 from ..models.department import Department
@@ -92,8 +90,7 @@ class DocumentDownloader:
             }
             chrome_options.add_experimental_option("prefs", prefs)
 
-            service = Service(ChromeDriverManager().install())
-            self.driver = webdriver.Chrome(service=service, options=chrome_options)
+            self.driver = webdriver.Chrome(options=chrome_options)
 
             page_load_timeout = selenium_config.get("page_load_timeout", 30)
             implicit_wait = selenium_config.get("implicit_wait", 10)

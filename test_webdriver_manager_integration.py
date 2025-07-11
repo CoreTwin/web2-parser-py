@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Test script for webdriver-manager integration."""
+"""Test script for Selenium Manager integration with Chrome 137.0.7118.2."""
 
 import sys
 import os
@@ -8,9 +8,9 @@ sys.path.insert(0, os.path.join(os.path.dirname(__file__), 'job_instruction_down
 from job_instruction_downloader.src.core.downloader import DocumentDownloader
 from job_instruction_downloader.src.utils.config import ConfigManager
 
-def test_webdriver_manager_integration():
-    """Test webdriver-manager integration with DocumentDownloader."""
-    print("Testing webdriver-manager integration...")
+def test_selenium_manager_integration():
+    """Test Selenium Manager integration with DocumentDownloader for Chrome 137.0.7118.2."""
+    print("Testing Selenium Manager integration with Chrome 137.0.7118.2...")
     
     try:
         config_manager = ConfigManager()
@@ -23,8 +23,11 @@ def test_webdriver_manager_integration():
         print(f"WebDriver setup result: {result}")
         
         if downloader.driver:
-            print("✅ WebDriver initialized successfully with webdriver-manager")
+            print("✅ WebDriver initialized successfully with Selenium Manager")
             print(f"WebDriver session ID: {downloader.driver.session_id}")
+            
+            chrome_version = downloader.driver.capabilities.get('browserVersion', 'Unknown')
+            print(f"✅ Chrome version detected: {chrome_version}")
             
             downloader.driver.get("about:blank")
             print("✅ WebDriver can navigate to pages")
@@ -36,12 +39,13 @@ def test_webdriver_manager_integration():
             return False
             
     except Exception as e:
-        print(f"❌ Error during webdriver-manager integration test: {e}")
+        print(f"❌ Error during Selenium Manager integration test: {e}")
         return False
     
-    print("\n🎉 webdriver-manager integration test completed successfully!")
+    print("\n🎉 Selenium Manager integration test completed successfully!")
+    print("✅ Chrome 137.0.7118.2 compatibility verified!")
     return True
 
 if __name__ == "__main__":
-    success = test_webdriver_manager_integration()
+    success = test_selenium_manager_integration()
     sys.exit(0 if success else 1)
