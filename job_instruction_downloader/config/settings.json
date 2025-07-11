@@ -26,7 +26,7 @@
     "check_duplicates": true,
     "backup_enabled": false,
     "credentials_path": "config/credentials.json",
-    "root_folder_name": "Job Instructions",
+    "root_folder_name": "Documents",
     "cleanup_after_upload": false
   },
   "error_handling": {
@@ -51,6 +51,80 @@
       "http_requests": false,
       "selenium_actions": false,
       "cloud_operations": true
+    }
+  },
+  "document_types": {
+    "job_instruction": {
+      "name": "Job Instructions",
+      "description": "Employee job descriptions and responsibilities",
+      "default_extension": ".docx",
+      "supported_extensions": [".docx", ".doc"],
+      "folder_name": "Job Instructions",
+      "validation": {
+        "min_size": 30000,
+        "max_size": 10485760,
+        "check_content": true
+      }
+    },
+    "contract": {
+      "name": "Contracts",
+      "description": "Legal contracts and agreements",
+      "default_extension": ".pdf",
+      "supported_extensions": [".pdf", ".docx", ".doc"],
+      "folder_name": "Contracts",
+      "validation": {
+        "min_size": 50000,
+        "max_size": 20971520,
+        "check_content": true
+      }
+    },
+    "policy": {
+      "name": "Policies",
+      "description": "Company policies and procedures",
+      "default_extension": ".docx",
+      "supported_extensions": [".docx", ".doc", ".pdf"],
+      "folder_name": "Policies",
+      "validation": {
+        "min_size": 20000,
+        "max_size": 10485760,
+        "check_content": true
+      }
+    },
+    "manual": {
+      "name": "Manuals",
+      "description": "User manuals and documentation",
+      "default_extension": ".pdf",
+      "supported_extensions": [".pdf", ".docx", ".doc"],
+      "folder_name": "Manuals",
+      "validation": {
+        "min_size": 100000,
+        "max_size": 52428800,
+        "check_content": true
+      }
+    },
+    "form": {
+      "name": "Forms",
+      "description": "Business forms and templates",
+      "default_extension": ".docx",
+      "supported_extensions": [".docx", ".doc", ".pdf"],
+      "folder_name": "Forms",
+      "validation": {
+        "min_size": 10000,
+        "max_size": 5242880,
+        "check_content": true
+      }
+    },
+    "template": {
+      "name": "Templates",
+      "description": "Document templates and samples",
+      "default_extension": ".docx",
+      "supported_extensions": [".docx", ".doc"],
+      "folder_name": "Templates",
+      "validation": {
+        "min_size": 15000,
+        "max_size": 5242880,
+        "check_content": true
+      }
     }
   }
 }
