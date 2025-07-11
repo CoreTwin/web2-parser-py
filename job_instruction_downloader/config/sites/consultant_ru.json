@@ -1,0 +1,62 @@
+{
+  "site_config": {
+    "name": "Consultant.ru",
+    "base_url": "https://cloud.consultant.ru",
+    "type": "legal_system",
+    "authentication": {
+      "method": "session_cookies",
+      "login_url": "/login",
+      "credentials_required": false
+    },
+    "navigation": {
+      "document_list_selector": "[devinid]",
+      "pagination": {
+        "enabled": false,
+        "next_button_selector": ".next-page"
+      }
+    },
+    "document_extraction": {
+      "title_selector": "h1, .document-title",
+      "download_button_selector": "[devinid='14']",
+      "download_method": "click_and_wait",
+      "file_validation": {
+        "min_size_bytes": 30000,
+        "expected_extensions": [".docx", ".pdf", ".doc"]
+      }
+    },
+    "rate_limiting": {
+      "requests_per_minute": 20,
+      "delay_between_requests": 3,
+      "delay_between_sections": 10
+    },
+    "error_handling": {
+      "retry_attempts": 3,
+      "retry_delay": 5,
+      "refresh_page_on_error": true
+    }
+  },
+  "parser_config": {
+    "name": "consultant_parser",
+    "selectors": {
+      "department_sections": ".department-section",
+      "document_links": "[devinid]",
+      "document_title": ".job-title, h1",
+      "export_button": "[devinid='14']",
+      "download_link": "a[href*='download']"
+    },
+    "extraction_rules": {
+      "title_cleanup": {
+        "remove_prefixes": ["Должностная инструкция"],
+        "remove_suffixes": ["(профессиональный стандарт)"],
+        "max_length": 100
+      },
+      "department_mapping": {
+        "ПЛАНОВО-ЭКОНОМИЧЕСКИЙ ОТДЕЛ": "planning_economic",
+        "ФИНАНСОВЫЙ ОТДЕЛ": "financial",
+        "КОНТРАКТНАЯ СЛУЖБА": "contract_service",
+        "ОТДЕЛ ОРГАНИЗАЦИИ": "organization",
+        "ОХРАНА ТРУДА": "safety"
+      }
+    }
+  }
+}
