@@ -1,5 +1,5 @@
 """
-Data model for job instruction documents.
+Data model for universal document processing.
 """
 
 from dataclasses import dataclass
@@ -10,7 +10,7 @@ from typing import Optional, Dict, Any
 
 @dataclass
 class JobInstruction:
-    """Represents a job instruction document."""
+    """Represents a document for universal processing (job instructions, contracts, policies, etc.)."""
 
     title: str
     department: str
@@ -26,6 +26,8 @@ class JobInstruction:
     cloud_file_id: Optional[str] = None
     download_timestamp: Optional[float] = None
     upload_timestamp: Optional[float] = None
+    document_type: str = "job_instruction"  # job_instruction, contract, policy, manual, etc.
+    file_extension: Optional[str] = None  # .docx, .pdf, .doc - auto-detected if None
 
     def __post_init__(self):
         """Post-initialization processing."""
@@ -37,9 +39,22 @@ class JobInstruction:
 
     @property
     def filename(self) -> str:
-        """Generate filename for the document."""
+        """Generate filename for the document with appropriate extension."""
         clean_title = self.clean_filename(self.title)
-        return f"{clean_title}.docx"
+        extension = self.file_extension or self._get_default_extension()
+        return f"{clean_title}{extension}"
+    
+    def _get_default_extension(self) -> str:
+        """Get default file extension based on document type."""
+        extension_map = {
+            "job_instruction": ".docx",
+            "contract": ".pdf", 
+            "policy": ".docx",
+            "manual": ".pdf",
+            "form": ".docx",
+            "template": ".docx"
+        }
+        return extension_map.get(self.document_type, ".docx")
 
     @property
     def is_downloaded(self) -> bool:
@@ -78,7 +93,9 @@ class JobInstruction:
             "cloud_status": self.cloud_status,
             "cloud_file_id": self.cloud_file_id,
             "download_timestamp": self.download_timestamp,
-            "upload_timestamp": self.upload_timestamp
+            "upload_timestamp": self.upload_timestamp,
+            "document_type": self.document_type,
+            "file_extension": self.file_extension
         }
 
     @classmethod
@@ -106,5 +123,7 @@ class JobInstruction:
             cloud_status=data.get("cloud_status"),
             cloud_file_id=data.get("cloud_file_id"),
             download_timestamp=data.get("download_timestamp"),
-            upload_timestamp=data.get("upload_timestamp")
+            upload_timestamp=data.get("upload_timestamp"),
+            document_type=data.get("document_type", "job_instruction"),
+            file_extension=data.get("file_extension")
         )
