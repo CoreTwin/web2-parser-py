@@ -4,7 +4,7 @@ Document validation functionality.
 
 import logging
 from pathlib import Path
-from typing import Dict, Any
+from typing import Dict, Any, List
 
 
 class DocumentValidator:
@@ -102,19 +102,20 @@ class DocumentValidator:
         Returns:
             Dictionary with validation results and metadata.
         """
-        result = {
+        result: Dict[str, Any] = {
             "valid": False,
             "file_size": 0,
             "file_type": "",
             "errors": [],
             "metadata": {}
         }
+        errors: List[str] = result["errors"]
 
         try:
             path = Path(file_path)
 
             if not path.exists():
-                result["errors"].append("File does not exist")
+                errors.append("File does not exist")
                 return result
 
             result["file_size"] = path.stat().st_size
@@ -124,10 +125,10 @@ class DocumentValidator:
                 result["valid"] = True
                 result["metadata"] = self._extract_metadata(file_path)
             else:
-                result["errors"].append("Invalid file content")
+                errors.append("Invalid file content")
 
         except Exception as e:
-            result["errors"].append(f"Validation error: {e}")
+            errors.append(f"Validation error: {e}")
 
         return result
 

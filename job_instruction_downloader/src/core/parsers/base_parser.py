@@ -53,7 +53,8 @@ class BaseParser(ABC):
         Returns:
             Dictionary of CSS selectors.
         """
-        return self.site_config.get("extraction", {}).get("selectors", {})
+        selectors = self.site_config.get("extraction", {}).get("selectors", {})
+        return selectors if isinstance(selectors, dict) else {}
 
     def get_rate_limits(self) -> Dict[str, Any]:
         """Get rate limiting configuration.
@@ -61,7 +62,8 @@ class BaseParser(ABC):
         Returns:
             Rate limiting configuration dictionary.
         """
-        return self.site_config.get("rate_limiting", {})
+        rate_limits = self.site_config.get("rate_limiting", {})
+        return rate_limits if isinstance(rate_limits, dict) else {}
 
     def get_download_config(self) -> Dict[str, Any]:
         """Get download configuration.
@@ -69,7 +71,8 @@ class BaseParser(ABC):
         Returns:
             Download configuration dictionary.
         """
-        return self.site_config.get("download", {})
+        download_config = self.site_config.get("download", {})
+        return download_config if isinstance(download_config, dict) else {}
 
     def get_validation_config(self) -> Dict[str, Any]:
         """Get validation configuration.
@@ -77,7 +80,8 @@ class BaseParser(ABC):
         Returns:
             Validation configuration dictionary.
         """
-        return self.get_download_config().get("validation", {})
+        validation_config = self.get_download_config().get("validation", {})
+        return validation_config if isinstance(validation_config, dict) else {}
 
     def process_title(self, title: str) -> str:
         """Process and clean document title.

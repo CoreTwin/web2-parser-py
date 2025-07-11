@@ -5,29 +5,16 @@ Main window GUI for the Job Instruction Downloader application.
 import logging
 from typing import Dict, Any, Optional
 
-try:
-    from PyQt6.QtWidgets import (
-        QMainWindow, QWidget, QVBoxLayout, QHBoxLayout,
-        QTreeWidget, QTreeWidgetItem, QPushButton, QProgressBar,
-        QLabel, QTextEdit, QSplitter, QGroupBox,
-        QStatusBar, QMessageBox
-    )
-    from PyQt6.QtCore import Qt, pyqtSignal
-    from PyQt6.QtGui import QAction
-    GUI_FRAMEWORK = "PyQt6"
-except ImportError:
-    try:
-        from PySide6.QtWidgets import (
-            QMainWindow, QWidget, QVBoxLayout, QHBoxLayout,
-            QTreeWidget, QTreeWidgetItem, QPushButton, QProgressBar,
-            QLabel, QTextEdit, QSplitter, QGroupBox,
-            QStatusBar, QMessageBox
-        )
-        from PySide6.QtCore import Qt, Signal as pyqtSignal
-        from PySide6.QtGui import QAction
-        GUI_FRAMEWORK = "PySide6"
-    except ImportError:
-        raise ImportError("Neither PyQt6 nor PySide6 is available")
+from PyQt6.QtWidgets import (
+    QMainWindow, QWidget, QVBoxLayout, QHBoxLayout,
+    QTreeWidget, QTreeWidgetItem, QPushButton, QProgressBar,
+    QLabel, QTextEdit, QSplitter, QGroupBox,
+    QStatusBar, QMessageBox
+)
+from PyQt6.QtCore import Qt, pyqtSignal
+from PyQt6.QtGui import QAction
+
+GUI_FRAMEWORK = "PyQt6"
 
 
 class MainWindow(QMainWindow):
