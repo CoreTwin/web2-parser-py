@@ -142,7 +142,7 @@ class DocumentDownloader:
 
                 if not self.setup_driver():
                     return False
-                
+
                 if upload_to_cloud and not self.setup_cloud_storage():
                     self.logger.warning("Cloud storage setup failed, continuing without cloud upload")
                     upload_to_cloud = False
@@ -173,7 +173,7 @@ class DocumentDownloader:
 
                 self._update_status("Загрузка завершена")
                 self.structured_logger.log_operation(
-                    self.logger, "info", 
+                    self.logger, "info",
                     f"Download completed. Success: {self.completed_documents}, Failed: {self.failed_documents}",
                     operation="download_complete"
                 )
@@ -191,8 +191,8 @@ class DocumentDownloader:
         finally:
             self.cleanup()
 
-    def _process_department(self, department: Department, site_config: Dict[str, Any], 
-                           upload_to_cloud: bool = True) -> bool:
+    def _process_department(self, department: Department, site_config: Dict[str, Any],
+                            upload_to_cloud: bool = True) -> bool:
         """Process a single department.
 
         Args:
@@ -208,9 +208,9 @@ class DocumentDownloader:
                 if not self.driver or not self.parser:
                     self.logger.warning(f"Cannot extract job instructions for department: {department.name}")
                     return False
-                
+
                 department.job_instructions = self.extract_department_documents(department)
-                
+
                 if not department.job_instructions:
                     self.structured_logger.log_operation(
                         self.logger, "warning", f"No job instructions found for department: {department.name}",
@@ -219,7 +219,7 @@ class DocumentDownloader:
                     return True
 
             with self.structured_logger.timed_operation(
-                self.logger, "info", f"Processing department {department.name}", 
+                self.logger, "info", f"Processing department {department.name}",
                 operation="process_department", department=department.name
             ):
                 for job_instruction in department.job_instructions:
@@ -230,18 +230,18 @@ class DocumentDownloader:
                             self._download_single_document,
                             job_instruction, site_config
                         )
-                        
+
                         if download_result[0]:  # Success
                             job_instruction.status = "completed"
                             job_instruction.local_path = download_result[1]
-                            
+
                             if upload_to_cloud and self.cloud_manager and job_instruction.local_path:
                                 cloud_success = self.upload_to_cloud(
-                                    job_instruction.local_path, 
-                                    department.name, 
+                                    job_instruction.local_path,
+                                    department.name,
                                     job_instruction.title
                                 )
-                                
+
                                 if cloud_success:
                                     job_instruction.cloud_status = "uploaded"
                                     self.structured_logger.log_operation(
@@ -256,7 +256,7 @@ class DocumentDownloader:
                                         operation="cloud_upload", department=department.name,
                                         document_title=job_instruction.title
                                     )
-                            
+
                             self.completed_documents += 1
                             self.structured_logger.log_operation(
                                 self.logger, "info", f"Successfully downloaded: {job_instruction.title}",
@@ -275,7 +275,9 @@ class DocumentDownloader:
                         if self.progress_callback:
                             self.progress_callback(self.completed_documents, self.total_documents)
 
-                        delay = site_config.get("site_config", {}).get("rate_limiting", {}).get("delay_between_requests", 3)
+                        delay = site_config.get("site_config", {}).get(
+                            "rate_limiting", {}
+                        ).get("delay_between_requests", 3)
                         time.sleep(delay)
 
                     except Exception as e:
@@ -297,8 +299,8 @@ class DocumentDownloader:
             )
             return False
 
-    def _download_single_document(self, job_instruction: JobInstruction, 
-                                 site_config: Dict[str, Any]) -> Tuple[bool, Optional[str]]:
+    def _download_single_document(self, job_instruction: JobInstruction,
+                                  site_config: Dict[str, Any]) -> Tuple[bool, Optional[str]]:
         """Download a single document.
 
         Args:
@@ -336,48 +338,49 @@ class DocumentDownloader:
                     download_timeout = site_config.get("site_config", {}).get(
                         "document_extraction", {}
                     ).get("download_timeout", 30)
-                    
+
                     time.sleep(5)  # Initial wait
-                    
+
                     download_dir = Path(self.config.get("download", {}).get("temp_directory", "downloads"))
                     download_dir.mkdir(parents=True, exist_ok=True)
-                    
+
                     max_wait_time = time.time() + download_timeout
                     downloaded_file = None
-                    
+
                     while time.time() < max_wait_time:
                         files = list(download_dir.glob("*"))
                         if files:
                             downloaded_file = max(files, key=lambda f: f.stat().st_mtime)
-                            
-                            if not downloaded_file.name.endswith('.crdownload') and not downloaded_file.name.endswith('.part'):
+
+                            if (not downloaded_file.name.endswith('.crdownload') and
+                                    not downloaded_file.name.endswith('.part')):
                                 break
-                        
+
                         time.sleep(1)
-                    
+
                     if not downloaded_file:
                         self.structured_logger.log_operation(
                             self.logger, "error", f"Download timeout for: {job_instruction.title}",
                             operation="download_document", document_title=job_instruction.title
                         )
                         return False, None
-                    
+
                     if self.validator and not self.validator.validate_document_structure(str(downloaded_file)):
                         self.structured_logger.log_operation(
                             self.logger, "error", f"Downloaded file validation failed: {job_instruction.title}",
                             operation="validate_document", document_title=job_instruction.title
                         )
                         return False, None
-                    
+
                     clean_filename = self._generate_filename(job_instruction.title)
                     new_file_path = download_dir / clean_filename
                     downloaded_file.rename(new_file_path)
-                    
+
                     self.structured_logger.log_operation(
                         self.logger, "info", f"Successfully downloaded and validated: {job_instruction.title}",
                         operation="download_document", document_title=job_instruction.title
                     )
-                    
+
                     return True, str(new_file_path)
 
                 except TimeoutException:
@@ -453,44 +456,44 @@ class DocumentDownloader:
 
     def setup_cloud_storage(self) -> bool:
         """Setup cloud storage integration.
-        
+
         Returns:
             True if setup successful, False otherwise.
         """
         try:
             cloud_config = self.config.get("cloud_storage", {})
             provider = cloud_config.get("default_provider", "google_drive")
-            
+
             if provider == "google_drive":
                 self.cloud_manager = GoogleDriveManager(self.config)
                 return self.cloud_manager.authenticate()
             else:
                 self.logger.warning(f"Unsupported cloud provider: {provider}")
                 return False
-                
+
         except Exception as e:
             self.structured_logger.log_operation(
                 self.logger, "error", f"Failed to setup cloud storage: {e}",
                 operation="setup_cloud_storage"
             )
             return False
-    
-    def upload_to_cloud(self, file_path: str, department_name: str, 
-                       document_title: str) -> bool:
+
+    def upload_to_cloud(self, file_path: str, department_name: str,
+                        document_title: str) -> bool:
         """Upload file to cloud storage with proper folder organization.
-        
+
         Args:
             file_path: Path to the file to upload.
             department_name: Name of the department for folder organization.
             document_title: Title of the document for naming.
-            
+
         Returns:
             True if upload successful, False otherwise.
         """
         if not self.cloud_manager:
             self.logger.warning("Cloud manager not initialized")
             return False
-        
+
         try:
             with self.structured_logger.timed_operation(
                 self.logger, "info", f"Uploading to cloud storage: {document_title}",
@@ -500,9 +503,9 @@ class DocumentDownloader:
                 folder_id = self._get_or_create_department_folder(department_name)
                 if not folder_id:
                     return False
-                
+
                 clean_filename = self._generate_filename(document_title)
-                
+
                 cloud_config = self.config.get("cloud_storage", {})
                 if cloud_config.get("check_duplicates", True):
                     if self.cloud_manager.check_duplicate(clean_filename, folder_id):
@@ -512,30 +515,30 @@ class DocumentDownloader:
                             document_title=document_title
                         )
                         return True
-                
+
                 file_id = self.error_handler.retry_with_backoff(
                     self.cloud_manager.upload_file,
                     file_path, folder_id, clean_filename
                 )
-                
+
                 if file_id:
                     self.structured_logger.log_operation(
-                        self.logger, "info", f"Successfully uploaded to cloud storage",
+                        self.logger, "info", "Successfully uploaded to cloud storage",
                         operation="cloud_upload", department=department_name,
                         document_title=document_title
                     )
-                    
+
                     if cloud_config.get("cleanup_after_upload", False):
                         try:
                             Path(file_path).unlink()
                             self.logger.info(f"Cleaned up local file: {file_path}")
                         except Exception as e:
                             self.logger.warning(f"Failed to cleanup local file: {e}")
-                    
+
                     return True
                 else:
                     return False
-                    
+
         except Exception as e:
             self.structured_logger.log_operation(
                 self.logger, "error", f"Cloud upload failed: {e}",
@@ -543,54 +546,54 @@ class DocumentDownloader:
                 document_title=document_title
             )
             return False
-    
+
     def _get_or_create_department_folder(self, department_name: str) -> Optional[str]:
         """Get or create department folder in cloud storage.
-        
+
         Args:
             department_name: Name of the department.
-            
+
         Returns:
             Folder ID if successful, None otherwise.
         """
         if not self.cloud_manager:
             return None
-            
+
         try:
             cloud_config = self.config.get("cloud_storage", {})
             root_folder_name = cloud_config.get("root_folder_name", "Job Instructions")
-            
+
             root_folder_id = self.cloud_manager.get_or_create_folder(root_folder_name)
             if not root_folder_id:
                 self.logger.error("Failed to create root folder")
                 return None
-            
+
             department_folder_id = self.cloud_manager.get_or_create_folder(
                 department_name, root_folder_id
             )
-            
+
             return department_folder_id
-            
+
         except Exception as e:
             self.logger.error(f"Failed to get/create department folder: {e}")
             return None
-    
+
     def _generate_filename(self, document_title: str) -> str:
         """Generate clean filename from document title.
-        
+
         Args:
             document_title: Original document title.
-            
+
         Returns:
             Clean filename with .docx extension.
         """
         clean_title = re.sub(r'[^\w\s-]', '', document_title)
         clean_title = re.sub(r'[-\s]+', '-', clean_title)
         clean_title = clean_title.strip('-')
-        
+
         if len(clean_title) > 100:
             clean_title = clean_title[:100].strip('-')
-        
+
         return f"{clean_title}.docx"
 
     def extract_department_documents(self, department: Department) -> List[JobInstruction]:
