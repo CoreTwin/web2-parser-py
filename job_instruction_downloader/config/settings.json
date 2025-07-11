@@ -24,7 +24,17 @@
     "default_provider": "google_drive",
     "create_folders_automatically": true,
     "check_duplicates": true,
-    "backup_enabled": false
+    "backup_enabled": false,
+    "credentials_path": "config/credentials.json",
+    "root_folder_name": "Job Instructions",
+    "cleanup_after_upload": false
+  },
+  "error_handling": {
+    "retry_attempts": 3,
+    "retry_delay": 5,
+    "exponential_backoff": true,
+    "refresh_page_on_error": true,
+    "skip_on_repeated_failure": true
   },
   "ui": {
     "theme": "light",
@@ -36,9 +46,11 @@
     "max_file_size": "10MB",
     "backup_count": 5,
     "console_output": true,
+    "structured_logging": true,
     "detailed_logs": {
       "http_requests": false,
-      "selenium_actions": false
+      "selenium_actions": false,
+      "cloud_operations": true
     }
   }
 }
