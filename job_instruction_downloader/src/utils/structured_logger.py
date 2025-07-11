@@ -159,7 +159,7 @@ class StructuredLogger:
         if document_title:
             extra['document_title'] = document_title
         if duration is not None:
-            extra['duration'] = str(duration)
+            extra['duration'] = duration
 
         for key, value in kwargs.items():
             extra[key] = value

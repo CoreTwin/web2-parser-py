@@ -71,6 +71,10 @@ class DocumentDownloader:
             chrome_options.add_argument("--disable-dev-shm-usage")
             chrome_options.add_argument("--disable-images")
             chrome_options.add_argument("--disable-javascript")
+            chrome_options.add_argument("--disable-gpu")
+            chrome_options.add_argument("--disable-extensions")
+            chrome_options.add_argument("--disable-web-security")
+            chrome_options.add_argument("--remote-debugging-port=9222")
             chrome_options.add_experimental_option("useAutomationExtension", False)
             chrome_options.add_experimental_option("excludeSwitches", ["enable-automation"])
 
@@ -592,7 +596,7 @@ class DocumentDownloader:
         clean_title = clean_title.strip('-')
 
         if len(clean_title) > 100:
-            clean_title = clean_title[:100].strip('-')
+            clean_title = clean_title[:100]
 
         return f"{clean_title}.docx"
 
