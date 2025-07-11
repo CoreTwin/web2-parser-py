@@ -52,7 +52,7 @@ def test_document_formats():
         with open(consultant_config_path, 'r', encoding='utf-8') as f:
             site_config = json.load(f)
         
-        validation_config = site_config.get("validation", {})
+        validation_config = site_config.get("download", {}).get("validation", {})
         validation_config["expected_file_types"] = [".docx", ".doc", ".pdf"]  # Add PDF support
         
         print("✅ DocumentValidator initialized successfully")
@@ -124,7 +124,7 @@ def test_document_size_limits():
         consultant_config_path = Path(__file__).parent / "job_instruction_downloader/config/sites/consultant_ru.json"
         with open(consultant_config_path, 'r', encoding='utf-8') as f:
             site_config = json.load(f)
-        validation_config = site_config.get("validation", {})
+        validation_config = site_config.get("download", {}).get("validation", {})
         
         small_valid = validator.validate_file(str(small_file), validation_config)
         print(f"Small file (1KB) validation: {small_valid} (expected: False)")
